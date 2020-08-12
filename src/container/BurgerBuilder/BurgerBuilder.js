@@ -11,6 +11,7 @@ import Spinner from '../../components/UI/Spinner/Spinner'
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'
 import * as burgerBuilderAction from '../../store/actions/index'
 import * as orderActions from '../../store/actions/order'
+import * as authActions from '../../store/actions/auth'
 
 class BurgerBuilder extends Component {
     state = {
@@ -29,9 +30,15 @@ class BurgerBuilder extends Component {
     }
 
     turnOnPurchaseMode = () => {
-        this.setState((state, props) => {
-            return { purchaseMode: true }
-        })
+        if (this.props.isAuth) {
+            this.setState((state, props) => {
+                return { purchaseMode: true }
+            })
+        }
+        else {
+            this.props.setRedirectPath('/checkout')
+            this.props.history.push('/auth')
+        }
     }
 
     purchaseCancel = () => {
@@ -64,7 +71,8 @@ class BurgerBuilder extends Component {
                         disabledIngredients={disabledIngredients}
                         totalPrice={this.props.totalPrice}
                         purchaseable={this.updatePurchaseState(this.props.ingredients)}
-                        turnOnPurchaseMode={this.turnOnPurchaseMode} />
+                        turnOnPurchaseMode={this.turnOnPurchaseMode}
+                        isAuth={this.props.isAuth} />
                 </Aux>)
 
             orderSummary = <OrderSummary
@@ -83,12 +91,12 @@ class BurgerBuilder extends Component {
         }
 
         return (
-            <Aux>
+            < Aux >
                 <Modal show={this.state.purchaseMode} modalClose={this.purchaseCancel}>
                     {orderSummary}
                 </Modal>
                 {burger}
-            </Aux>
+            </Aux >
         )
     }
 }
@@ -97,7 +105,8 @@ const mapStateToProps = state => {
     return {
         ingredients: state.burgerBuilder.ingredients,
         totalPrice: state.burgerBuilder.totalPrice,
-        error: state.burgerBuilder.error
+        error: state.burgerBuilder.error,
+        isAuth: state.auth.token !== null
     }
 }
 
@@ -106,7 +115,8 @@ const mapDispatchToProps = dispatch => {
         addIngredient: ingredientName => dispatch(burgerBuilderAction.addIngredient(ingredientName)),
         removeIngredient: ingredientName => dispatch(burgerBuilderAction.removeIngredient(ingredientName)),
         initIngredients: () => dispatch(burgerBuilderAction.initIngredients()),
-        initPurchase: () => dispatch(orderActions.initPurchase())
+        initPurchase: () => dispatch(orderActions.initPurchase()),
+        setRedirectPath: path => dispatch(authActions.authRedirectPath(path))
     }
 }
 
