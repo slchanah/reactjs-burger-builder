@@ -13,7 +13,7 @@ import * as burgerBuilderAction from '../../store/actions/index'
 import * as orderActions from '../../store/actions/order'
 import * as authActions from '../../store/actions/auth'
 
-class BurgerBuilder extends Component {
+export class BurgerBuilder extends Component {
     state = {
         purchaseMode: false,
         // loading: false
