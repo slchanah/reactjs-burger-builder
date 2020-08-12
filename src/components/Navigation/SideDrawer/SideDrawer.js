@@ -1,4 +1,5 @@
 import React from 'react'
+import { connect } from 'react-redux'
 
 import classes from './SideDrawer.module.css'
 import Logo from '../../Logo/Logo'
@@ -15,16 +16,22 @@ const sideDrawer = props => {
     return (
         <Aux>
             <Backdrop show={props.show} click={props.closeSideDrawer} />
-            <div className={sideDrawerClasses.join(' ')}>
+            <div className={sideDrawerClasses.join(' ')} onClick={props.closeSideDrawer}>
                 <div className={classes.Logo}>
                     <Logo />
                 </div>
                 <nav>
-                    <NavigationItems />
+                    <NavigationItems isAuth={props.isAuth} />
                 </nav>
             </div>
         </Aux>
     )
 }
 
-export default sideDrawer
+const mapStateToProps = state => {
+    return {
+        isAuth: state.auth.token !== null
+    }
+}
+
+export default connect(mapStateToProps)(sideDrawer)
