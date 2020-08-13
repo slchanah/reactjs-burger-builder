@@ -52,9 +52,10 @@ const reducer = (state = initState, action) => {
                 ...state,
                 error: true
             }
-    }
 
-    return state
+        default:
+            return state
+    }
 }
 
 export default reducer
